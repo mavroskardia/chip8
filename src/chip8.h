@@ -37,7 +37,6 @@ namespace Chip8
 		vector<byte> program;
 		word program_length; 			// memory limits of chip8 don't allow anything higher than this
 		
-		void reset();
 		void initialize_memory();
 		int initialize_screen();
 		void teardown_screen();
