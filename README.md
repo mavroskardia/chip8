@@ -20,5 +20,6 @@ to compile there as well.
 
 Dependencies
 ------------
-Requires SDL2 [https://libsdl.org] and SDL2_ttf
-d[https://www.libsdl.org/projects/SDL_ttf/]
+Requires:
+- SDL2 https://libsdl.org
+- SDL2_ttf https://www.libsdl.org/projects/SDL_ttf/
