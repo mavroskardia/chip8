@@ -8,7 +8,10 @@
 #include <string>
 #include <sstream>
 #include <cstdlib>
+#include <cstring>
+#include <algorithm>
 #include <unordered_map>
+
 
 #include "Chip8.h"
 #include "SDL.h"
@@ -44,7 +47,13 @@ namespace Chip8
 	{
 		SDL_DestroyWindow((SDL_Window*)window);
 		SDL_DestroyRenderer((SDL_Renderer*)renderer);
+		SDL_DestroyTexture((SDL_Texture*)texture);
+		SDL_FreeFormat((SDL_PixelFormat*)pixel_format);
 		TTF_CloseFont((TTF_Font*)font);
+		
+		if (pixels)
+			delete[] pixels;
+			
 		TTF_Quit();
 		SDL_Quit();
 	}
@@ -259,24 +268,65 @@ namespace Chip8
 
 		SDL_SetRenderDrawColor(ren, 100, 100, 0, 255);
 
-		SDL_Rect rect;
-
 		for (int y = 0; y < NumPixelsTall; y++) {
 			for (int x = 0; x < NumPixelsWide; x++) {
-				if (gfx[x + (NumPixelsWide * y)]) {
-					rect = { x * PixelWidth, y * PixelHeight, PixelWidth, PixelHeight };
-					SDL_RenderFillRect(ren, &rect);
+				if (gfx[x + (NumPixelsWide * y)]) {					
+					fill_pixels(x, y);
 				}
 			}
 		}
 
-		if (show_debug) {
-			render_debug();
-		}
+		if (show_debug) render_debug();
+
+		postprocess(ren);
 
 		SDL_RenderPresent(ren);
 
 		redraw = false;
+	}
+	
+	inline void Chip8::fill_pixels(int gx, int gy) {
+		SDL_Rect r = { gx * PixelWidth, gy * PixelHeight, PixelWidth, PixelHeight };					
+				
+		for (int x = r.x; x < r.x + r.w; x++) {
+			for (int y = r.y; y < r.y + r.h; y++) {
+				pixels[x + y * GameWidth] = SDL_MapRGBA((SDL_PixelFormat*)pixel_format, 100, 0, 0, 0xff);
+			}
+		}
+	}	
+		
+	void Chip8::postprocess(void* renderer) {
+		auto ren = (SDL_Renderer*) renderer;
+		auto tex = (SDL_Texture*) texture;
+		auto pf = (SDL_PixelFormat*) pixel_format;
+
+		uint32_t p0,p1,p2,p3,p4,p5,p6,p7,p8;
+		uint8_t r,g,b,a;
+		
+		// skip tricky boundaries... because.
+		for (int y = 1; y < GameHeight-1; y++) {
+			for (int x = 1; x < GameWidth-1; x++) {
+				// box blur is simplest
+				p0 = pixels[(x-1) + (y-1) * GameWidth];
+				p1 = pixels[x + (y-1) * GameWidth];
+				p2 = pixels[(x+1) + (y-1) * GameWidth];
+				p3 = pixels[(x-1) + y * GameWidth];
+				p4 = pixels[x + y * GameWidth];
+				p5 = pixels[(x+1) + y * GameWidth];
+				p6 = pixels[(x-1) + (y+1) * GameWidth];
+				p7 = pixels[x + (y+1) * GameWidth];
+				p8 = pixels[(x+1) + (y+1) * GameWidth];
+				
+				SDL_GetRGBA((p0 + p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8) / 9, pf, &r, &g, &b, &a);
+				
+				pixels[x + y * GameWidth] = SDL_MapRGBA(pf, r, g, b, a);
+			}
+		}
+		
+		
+		SDL_Rect dstrect = {0,0,GameWidth,GameHeight};
+		SDL_UpdateTexture(tex, nullptr, pixels, GameWidth*4*sizeof(byte));
+		SDL_RenderCopy(ren, tex, nullptr, &dstrect);
 	}
 
 	void Chip8::render_debug() {
@@ -372,7 +422,15 @@ namespace Chip8
 			cerr << "SDL_CreateRenderer Error: " << SDL_GetError() << endl;
 			return 1;
 		}
-
+		
+		texture = SDL_CreateTexture((SDL_Renderer*)renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, GameWidth, GameHeight);
+		
+		pixel_format = SDL_AllocFormat(SDL_GetWindowPixelFormat((SDL_Window*)window));
+		
+		pixels = new uint32_t[GameWidth*GameHeight];
+		
+		memset(pixels, 0xff, GameWidth*GameHeight);
+		
 		font = (TTF_Font*) TTF_OpenFont("DroidSansMono.ttf", 16);
 
 		clear_window();
@@ -383,6 +441,7 @@ namespace Chip8
 	}
 
 	void Chip8::clear_window() {
+		memset(pixels, 0xff, GameWidth*GameHeight);
 		SDL_SetRenderDrawColor((SDL_Renderer*)renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear((SDL_Renderer*)renderer);
 		redraw = true;

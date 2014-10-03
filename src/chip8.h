@@ -42,6 +42,8 @@ namespace Chip8
 		void teardown_screen();
 		void clear_window();
 		void render();		
+		void postprocess(void* renderer);
+		void fill_pixels(int x, int y);
 		
 		bool running;
 		bool redraw;
@@ -52,8 +54,11 @@ namespace Chip8
 		
 		void render_debug();
 		void* font;
-		void* window;
+		void* window;		
 		void* renderer; // i can't call these what they really are because ld will crash :(
+		void* texture;
+		void* pixel_format;
+		uint32_t* pixels;
 		
 		word get_next_instruction();
 		void execute_instruction(word oc);
