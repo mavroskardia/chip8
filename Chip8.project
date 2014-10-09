@@ -41,10 +41,13 @@
     <File Name="deps/SDL2-2.0.3/i686-w64-mingw32/include/SDL2/SDL.h"/>
     <File Name="deps/SDL2_ttf-2.0.12/i686-w64-mingw32/include/SDL2/SDL_ttf.h"/>
     <File Name="src/chip8.h"/>
+    <File Name="src/convolver.h"/>
+    <File Name="src/includes.h"/>
   </VirtualDirectory>
   <VirtualDirectory Name="src">
     <File Name="src/chip8.cpp"/>
     <File Name="src/main.cpp"/>
+    <File Name="src/convolver.cpp"/>
   </VirtualDirectory>
   <Settings Type="Executable">
     <GlobalSettings>
@@ -57,7 +60,7 @@
       <ResourceCompiler Options=""/>
     </GlobalSettings>
     <Configuration Name="Debug" CompilerType="MinGW ( CodeLite-4.8.1 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
-      <Compiler Options="-g;-O0;-std=c++11;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
+      <Compiler Options="-g;-O3;-std=c++11;-Wall" C_Options="-g;-O0;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
         <IncludePath Value="deps/SDL2-2.0.3/include"/>
         <IncludePath Value="deps/SDL2_ttf-2.0.12/i686-w64-mingw32/include/SDL2"/>
@@ -65,8 +68,8 @@
       <Linker Options="" Required="yes">
         <LibraryPath Value="deps/SDL2_ttf-2.0.12/i686-w64-mingw32/lib"/>
         <LibraryPath Value="deps/SDL2-2.0.3/lib/x86"/>
-        <Library Value="SDL2"/>
         <Library Value="SDL2main"/>
+        <Library Value="SDL2"/>
         <Library Value="SDL2_ttf"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>

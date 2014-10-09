@@ -1,17 +1,20 @@
-#include "Chip8.h"
-#include <iostream>
+#include "includes.h"
+
+using namespace std;
 
 void do_test();
 
 int main(int argc, char **argv)
-{
+{	
+	SDL_SetMainReady();
+
 	auto chip8 = new Chip8::Chip8();
 	const char* filename = "INVADERS";
 
 	if (argc > 1) {
 		filename = argv[1];
 	} else {
-		std::cerr << "usage: " << argv[0] << " <romfile>" << std::endl;
+		cerr << "usage: " << argv[0] << " <romfile>" << endl;
 	}
 
 	if (!chip8->load(filename))
@@ -21,3 +24,5 @@ int main(int argc, char **argv)
 
 	return 0;
 }
+
+

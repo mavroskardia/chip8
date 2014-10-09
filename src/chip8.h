@@ -1,22 +1,14 @@
 #ifndef CHIP8_H
 #define CHIP8_H
 
-#include <cstdint>
-#include <string>
-#include <memory>
-#include <vector>
-#include <map>
-#include <deque>
-
-namespace Chip8
-{
+namespace Chip8 {
+	
 	typedef uint8_t byte;
 	typedef uint16_t word;
 	
 	using namespace std;
 	
-	class Chip8
-	{
+	class Chip8 {
 	private:
 		word i = 0;
 		word sp = 0;
@@ -37,13 +29,14 @@ namespace Chip8
 		vector<byte> program;
 		word program_length; 			// memory limits of chip8 don't allow anything higher than this
 		
+		Convolver* convolver;
 		void initialize_memory();
 		int initialize_screen();
 		void teardown_screen();
 		void clear_window();
-		void render();		
-		void postprocess(void* renderer);
-		void fill_pixels(int x, int y);
+		void render();
+		void postprocess(vector<SDL_Rect>* pixels);
+		void fill_pixels(int x, int y, uint8_t val);
 		
 		bool running;
 		bool redraw;
@@ -53,11 +46,13 @@ namespace Chip8
 		map<string, int> opcode_count;
 		
 		void render_debug();
-		void* font;
-		void* window;		
-		void* renderer; // i can't call these what they really are because ld will crash :(
-		void* texture;
-		void* pixel_format;
+		TTF_Font* font;		
+		SDL_Window* window;	
+		SDL_Renderer* renderer;
+		SDL_Texture* texture;
+		SDL_Surface* surface;
+		SDL_Surface* tmpsurface;
+		SDL_PixelFormat* pixel_format;
 		uint32_t* pixels;
 		
 		word get_next_instruction();

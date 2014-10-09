@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=amartin
-Date                   :=10/03/14
+Date                   :=10/09/14
 CodeLitePath           :="C:\Program Files (x86)\CodeLite"
 LinkerName             :=C:/MinGW-4.8.1/bin/g++.exe 
 SharedObjectLinkerName :=C:/MinGW-4.8.1/bin/g++.exe -shared -fPIC
@@ -41,8 +41,8 @@ LinkOptions            :=
 IncludePath            :=  $(IncludeSwitch). $(IncludeSwitch). $(IncludeSwitch)deps/SDL2-2.0.3/include $(IncludeSwitch)deps/SDL2_ttf-2.0.12/i686-w64-mingw32/include/SDL2 
 IncludePCH             := 
 RcIncludePath          := 
-Libs                   := $(LibrarySwitch)SDL2 $(LibrarySwitch)SDL2main $(LibrarySwitch)SDL2_ttf 
-ArLibs                 :=  "SDL2" "SDL2main" "SDL2_ttf" 
+Libs                   := $(LibrarySwitch)SDL2main $(LibrarySwitch)SDL2 $(LibrarySwitch)SDL2_ttf 
+ArLibs                 :=  "SDL2main" "SDL2" "SDL2_ttf" 
 LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)deps/SDL2_ttf-2.0.12/i686-w64-mingw32/lib $(LibraryPathSwitch)deps/SDL2-2.0.3/lib/x86 
 
 ##
@@ -52,7 +52,7 @@ LibPath                := $(LibraryPathSwitch). $(LibraryPathSwitch)deps/SDL2_tt
 AR       := C:/MinGW-4.8.1/bin/ar.exe rcu
 CXX      := C:/MinGW-4.8.1/bin/g++.exe 
 CC       := C:/MinGW-4.8.1/bin/gcc.exe 
-CXXFLAGS :=  -g -O0 -std=c++11 -Wall $(Preprocessors)
+CXXFLAGS :=  -g -O3 -std=c++11 -Wall $(Preprocessors)
 CFLAGS   :=  -g -O0 -Wall $(Preprocessors)
 ASFLAGS  := 
 AS       := C:/MinGW-4.8.1/bin/as.exe 
@@ -63,7 +63,7 @@ AS       := C:/MinGW-4.8.1/bin/as.exe
 ##
 CodeLiteDir:=C:\Program Files (x86)\CodeLite
 UNIT_TEST_PP_SRC_DIR:=C:\UnitTest++-1.3
-Objects0=$(IntermediateDirectory)/src_chip8.cpp$(ObjectSuffix) $(IntermediateDirectory)/src_main.cpp$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/src_chip8.cpp$(ObjectSuffix) $(IntermediateDirectory)/src_main.cpp$(ObjectSuffix) $(IntermediateDirectory)/src_convolver.cpp$(ObjectSuffix) 
 
 
 
@@ -105,6 +105,14 @@ $(IntermediateDirectory)/src_main.cpp$(DependSuffix): src/main.cpp
 
 $(IntermediateDirectory)/src_main.cpp$(PreprocessSuffix): src/main.cpp
 	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/src_main.cpp$(PreprocessSuffix) "src/main.cpp"
+
+$(IntermediateDirectory)/src_convolver.cpp$(ObjectSuffix): src/convolver.cpp $(IntermediateDirectory)/src_convolver.cpp$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/code/github/chip8/src/convolver.cpp" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/src_convolver.cpp$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/src_convolver.cpp$(DependSuffix): src/convolver.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/src_convolver.cpp$(ObjectSuffix) -MF$(IntermediateDirectory)/src_convolver.cpp$(DependSuffix) -MM "src/convolver.cpp"
+
+$(IntermediateDirectory)/src_convolver.cpp$(PreprocessSuffix): src/convolver.cpp
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/src_convolver.cpp$(PreprocessSuffix) "src/convolver.cpp"
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)
